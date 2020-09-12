@@ -1,6 +1,8 @@
 from models import CryptoModel
 from discord.ext import commands
+import re
 import asyncio
+unit_compiled = re.compile(r"^[A-Za-z\-_]+$")
 
 
 class CryptoCreateController(commands.Cog):
@@ -16,7 +18,7 @@ class CryptoCreateController(commands.Cog):
         新しい通貨を発行します。一つのサーバーにつき一通貨までしか発行できません。
         引数の詳細:
             name: 通貨の名前です。例: DiscordMoney
-            unit: 通貨の単位です。例: dm
+            unit: 通貨の単位です。英字、アンダースコア、横棒が使えます。例: dm
             per_amount: 通貨が10分ごと何枚増えるかを入力します。例えば100枚であれば１日に144,000枚増える計算になります。例: 100
         """
         if await self.model.guild_exists(ctx.guild.id):
@@ -29,6 +31,10 @@ class CryptoCreateController(commands.Cog):
 
         if await self.model.unit_exists(unit):
             await ctx.send("その単位の通貨はすでに存在します。")
+            return
+
+        if unit_compiled.match(unit) is None:
+            await ctx.send("その単位の表記は使用できません。他の表記に変更してください。")
             return
 
         await ctx.send(f"通貨名: {name}, 単位: {unit}, 10分ごとの増加量: {per_amount}{unit} "
