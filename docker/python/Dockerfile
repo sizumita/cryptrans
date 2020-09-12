@@ -10,6 +10,7 @@ RUN pip install --trusted-host pypi.python.org -r requirements.txt
 ADD main.py /bot
 ADD bot.py /bot
 ADD lib /bot/lib
-ADD cogs /bot/cogs
+ADD models /bot/models
+ADD controllers /bot/controllers
 
 CMD ["python", "main.py"]

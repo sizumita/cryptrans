@@ -2,9 +2,10 @@ from typing import Any
 
 
 class CryptoBase:
-    async def create(self, guild_id: int, name: str) -> bool:
+    async def create(self, guild_id: int, name: str, unit: str) -> bool:
         """
         Add a crypto.
+        :param unit: how say this crypto
         :param guild_id: The guild id
         :param name: The crypto name
         :return: bool
@@ -38,6 +39,13 @@ class CryptoBase:
         :return: bool
         """
 
+    async def unit_exists(self, unit: str) -> bool:
+        """
+        return True if unit exists
+        :param unit: check unit
+        :return: bool
+        """
+
     async def guild_exists(self, guild_id: int) -> bool:
         """
         return True if guild exists
@@ -58,6 +66,13 @@ class UserBase:
         """
         get user's a guild's crypto amounts
         :param user_id: get user id
+        :param guild_id: guild id
+        :return: Any
+        """
+
+    async def get_crypto_all(self, guild_id: int) -> Any:
+        """
+        get all users from a crypto
         :param guild_id: guild id
         :return: Any
         """
