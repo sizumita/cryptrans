@@ -11,7 +11,14 @@ class CryptoCreateController(commands.Cog):
     @commands.command(aliases=['register'])
     @commands.has_guild_permissions(administrator=True)
     @commands.guild_only()
-    async def create(self, ctx: commands.Context, name: str, unit: str) -> None:
+    async def create(self, ctx: commands.Context, name: str, unit: str, per_amount: int) -> None:
+        """
+        新しい通貨を発行します。一つのサーバーにつき一通貨までしか発行できません。
+        引数の詳細:
+            name: 通貨の名前です。例: DiscordMoney
+            unit: 通貨の単位です。例: dm
+            per_amount: 通貨が10分ごと何枚増えるかを入力します。例えば100枚であれば１日に144,000枚増える計算になります。例: 100
+        """
         if await self.model.guild_exists(ctx.guild.id):
             await ctx.send("このサーバーではすでに通貨が作成されています。")
             return
@@ -24,7 +31,8 @@ class CryptoCreateController(commands.Cog):
             await ctx.send("その単位の通貨はすでに存在します。")
             return
 
-        await ctx.send(f"通貨名: {name}, 単位: {unit}で通貨を作成しますか?\n作成する場合は`accept`, キャンセルする場合は他の文字を打ってください。")
+        await ctx.send(f"通貨名: {name}, 単位: {unit}, 10分ごとの増加量: {per_amount}{unit} "
+                       f"で通貨を作成しますか?\n作成する場合は`accept`, キャンセルする場合は他の文字を打ってください。")
 
         def check(m):
             return m.channel.id == ctx.channel.id and m.author.id == ctx.author.id
@@ -39,13 +47,16 @@ class CryptoCreateController(commands.Cog):
             return
 
         await ctx.send("通貨を作成します...")
-        await self.model.create(
+        r = await self.model.create(
             guild_id=ctx.guild.id,
             name=name,
-            unit=unit
+            unit=unit,
+            per_amount=per_amount
         )
-        await ctx.send(f"通貨の作成が完了しました。\n`vc.info {unit}`コマンドか、`vc.guild`コマンドで確認してください。")
-        return
+        if r:
+            await ctx.send(f"通貨の作成が完了しました。\n`vc.info {unit}`コマンドか、このサーバー内で`vc.info`コマンドを使用して確認してください。")
+            return
+        await ctx.send("不明なエラーが発生しました。")
 
     @create.error
     async def create_error(self, ctx: commands.Context, exception):

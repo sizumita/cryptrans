@@ -10,7 +10,8 @@ class Crypto(db.Model):
     fields:
         id: guild id
         name: crypto name
-        total: 発行枚数
+        hold: まだ運営が持っている数（運営含め誰にも渡していない、運営が自由に配布できる数）
+        per_amount: 10分ごとに増えるholdの数
         created_at: 最初に発行された時間
     """
     __tablename__ = "crypto"
@@ -18,20 +19,23 @@ class Crypto(db.Model):
     id = db.Column(db.BigInteger, primary_key=True)
     unit = db.Column(db.String)
     name = db.Column(db.String)
-    total = db.Column(db.BigInteger, default=0)
+    hold = db.Column(db.BigInteger, default=0)
+    per_amount = db.Column(db.BigInteger, default=100)
     created_at = db.Column(db.DateTime(), server_default='now()')
 
 
 class CryptoModel(CryptoBase):
-    async def create(self, guild_id: int, name: str, unit: str) -> bool:
-        if self.name_exists(name=name):
+    async def create(self, guild_id: int, name: str, unit: str, per_amount: int) -> bool:
+        if await self.name_exists(name=name):
             return False
-        if self.guild_exists(guild_id=guild_id):
+        if await self.guild_exists(guild_id=guild_id):
             return False
         try:
             await Crypto.create(
                 id=guild_id,
-                name=name
+                name=name,
+                unit=unit,
+                per_amount=per_amount,
             )
         except asyncpg.UniqueViolationError:
             return False
@@ -39,6 +43,9 @@ class CryptoModel(CryptoBase):
 
     async def get(self, guild_id: int) -> Crypto:
         return await Crypto.query.where(Crypto.id == guild_id).gino.first()
+
+    async def get_by_unit(self, unit: str) -> Crypto:
+        return await Crypto.query.where(Crypto.unit == unit).gino.first()
 
     async def all(self) -> List[Crypto]:
         return await Crypto.query.gino.all()
