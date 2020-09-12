@@ -12,7 +12,6 @@ services:
   cryptrans:
     environment:
       - BOT_TOKEN
-      - PREFIX
     env_file: postgres.env
     build:
       context: .
