@@ -107,3 +107,12 @@ class UserBase:
         :param amount: initialize amount
         :return: bool
         """
+
+    async def add_amount(self, user_id: int, guild_id: int, amount: int) -> bool:
+        """
+        add crypto to user
+        :param user_id: user id
+        :param guild_id: guild id
+        :param amount: adding amount
+        :return:
+        """
