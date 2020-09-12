@@ -7,6 +7,7 @@ ADD main.py /bot
 ADD bot.py /bot
 ADD lib /bot/lib
 ADD cogs /bot/cogs
+ADD requirements.txt /bot
 
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
