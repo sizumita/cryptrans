@@ -20,6 +20,10 @@ class CryptoGiveController(commands.Cog):
             await ctx.send("Botを指定することはできません。")
             return
 
+        if amount <= 0:
+            await ctx.send("0以下の数を指定することはできません。")
+            return
+
         crypto = await self.crypto_model.get(ctx.guild.id)
         if crypto is None:
             await ctx.send("このサーバーでは通貨は発行されていません。")
@@ -43,6 +47,10 @@ class CryptoGiveController(commands.Cog):
         """
         if member.bot:
             await ctx.send("Botを指定することはできません。")
+            return
+
+        if amount <= 0:
+            await ctx.send("0以下の数を指定することはできません。")
             return
 
         crypto = await self.crypto_model.get_by_unit(unit)
