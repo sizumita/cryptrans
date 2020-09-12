@@ -1,0 +1,23 @@
+version: "3"
+services:
+  cryptrans_postgres:
+    image: postgres
+    env_file: postgres.env
+    ports:
+      - "5430:5430"
+    volumes:
+      - pgsql-cryptrans-data:/var/lib/postgresql/data
+    container_name: "cryptransdb"
+    command: -p 5430
+  cryptrans:
+    environment:
+      - BOT_TOKEN
+      - PREFIX
+    env_file: postgres.env
+    build:
+      context: .
+      dockerfile: ./docker/python/Dockerfile
+    container_name: "cryptrans"
+
+volumes:
+  pgsql-cryptrans-data:
