@@ -1,2 +1,2 @@
-from .user_model import UserModel
-from .crypto_model import CryptoModel
+from .user_model import UserModel, User
+from .crypto_model import CryptoModel, Crypto

@@ -47,7 +47,7 @@ class CryptoInfoController(commands.Cog):
         )
         embed.add_field(
             name="配布されていない量",
-            value=f"{crypto.unit}{crypto.unit}",
+            value=f"{crypto.hold}{crypto.unit}",
             inline=False
         )
         embed.add_field(
