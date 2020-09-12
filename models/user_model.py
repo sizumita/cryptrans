@@ -27,6 +27,9 @@ class UserModel(UserBase):
     async def get_one(self, user_id: int, guild_id: int) -> User:
         return await User.query.where(User.id == user_id).where(User.guild_id == guild_id).gino.first()
 
+    async def get_crypto_all(self, guild_id: int) -> List[User]:
+        return await User.query.where(User.guild_id == guild_id).gino.all()
+
     async def all(self) -> List[User]:
         return await User.query.gino.all()
 

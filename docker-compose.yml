@@ -1,22 +1,22 @@
 version: "3"
 services:
-  cryptrans_postgres:
+  virtualcrypto_postgres:
     image: postgres
     env_file: postgres.env
     ports:
       - "5430:5430"
     volumes:
-      - pgsql-cryptrans-data:/var/lib/postgresql/data
-    container_name: "cryptransdb"
+      - pgsql-virtualCrypto-data:/var/lib/postgresql/data
+    container_name: "virtualcryptodb"
     command: -p 5430
-  cryptrans:
+  virtualcrypto:
     environment:
       - BOT_TOKEN
     env_file: postgres.env
     build:
       context: .
       dockerfile: ./docker/python/Dockerfile
-    container_name: "cryptrans"
+    container_name: "virtualCrypto"
 
 volumes:
-  pgsql-cryptrans-data:
+  pgsql-virtualCrypto-data:

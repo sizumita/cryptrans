@@ -4,10 +4,12 @@ from os import environ
 
 bot = Cryptrans()
 
-extensions = []
+controllers = [
+    "crypto_create_controller",
+]
 
-for extension in extensions:
-    bot.load_extension(extension)
+for controller in controllers:
+    bot.load_extension("controllers." + controller)
 
 
 bot.run(environ['BOT_TOKEN'])
