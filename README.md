@@ -3,6 +3,8 @@
 Cryptransは、Discord上でサーバーごとの仮想通貨と、
 それを取引する取引場を提供するBotです。
 
+招待URL: https://discord.com/api/oauth2/authorize?client_id=754196279315398666&permissions=904256&scope=bot
+
 ## 主な機能
 
 ### サーバーごとの仮想通貨を作る機能
