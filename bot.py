@@ -1,6 +1,6 @@
 from discord.ext import commands
-import discord
-from lib import CryptoModel, db, UserModel
+from os import environ
+from lib import db
 from sqlalchemy.engine.url import URL
 
 
@@ -13,18 +13,11 @@ class Cryptrans(commands.Bot):
         await db.set_bind(
             URL(
                 drivername="postgresql",
-                username="postgres",
-                password="postgres",
+                username=environ.get("POSTGRES_USER"),
+                password=environ.get("POSTGRES_PASSWORD"),
                 host="cryptrans_postgres",
                 port="5430",
-                database="cryptrans"
+                database=environ.get("POSTGRES_DB")
             )
         )
         await db.gino.create_all()
-
-    async def on_ready(self):
-        print('ready!')
-        print(await UserModel().all())
-        print(await UserModel().create(212513828641046529, 754191887203696732, 10))
-        print(await UserModel().all())
-        await db.pop_bind().close()
