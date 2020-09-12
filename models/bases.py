@@ -2,12 +2,13 @@ from typing import Any
 
 
 class CryptoBase:
-    async def create(self, guild_id: int, name: str, unit: str) -> bool:
+    async def create(self, guild_id: int, name: str, unit: str, per_amount: int) -> bool:
         """
         Add a crypto.
         :param unit: how say this crypto
         :param guild_id: The guild id
         :param name: The crypto name
+        :param per_amount: 10分ごとに新しく増えるholdの数
         :return: bool
         """
 
@@ -23,6 +24,13 @@ class CryptoBase:
         """
         get crypto by guild id
         :param guild_id: The guild id
+        :return: Any
+        """
+
+    async def get_by_unit(self, unit: str) -> Any:
+        """
+        get crypto by unit
+        :param unit: The unit
         :return: Any
         """
 
