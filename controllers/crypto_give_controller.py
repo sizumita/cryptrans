@@ -1,6 +1,7 @@
 from discord.ext import commands
-import discord
 from models import UserModel, CryptoModel, Crypto
+from lib import EmbedMaker
+import discord
 
 
 class CryptoGiveController(commands.Cog):
@@ -17,28 +18,30 @@ class CryptoGiveController(commands.Cog):
         通貨を配布します。これは未配布の通貨から支払われます。
         """
         if member.bot:
-            await ctx.send("Botを指定することはできません。")
+            await EmbedMaker(ctx).by_error_text("Botを指定することはできません。").send()
             return
 
         if amount <= 0:
-            await ctx.send("0以下の数を指定することはできません。")
+            await EmbedMaker(ctx).by_error_text("0以下の数を指定することはできません。").send()
             return
 
         crypto = await self.crypto_model.get(ctx.guild.id)
         if crypto is None:
-            await ctx.send("このサーバーでは通貨は発行されていません。")
+            await EmbedMaker(ctx).by_error_text("このサーバーでは通貨は発行されていません。").send()
             return
 
         if amount > crypto.hold:
-            await ctx.send(f"未配布の通貨が足りません。({amount}{crypto.unit} > {crypto.hold}{crypto.unit})")
+            await EmbedMaker(ctx).by_error_text(
+                f"未配布の通貨が足りません。({amount}{crypto.unit} > {crypto.hold}{crypto.unit})").send()
             return
         if await self.user_model.add_amount(member.id, ctx.guild.id, amount):
             await crypto.update(hold=Crypto.hold - amount).apply()
-            await ctx.send(f"{ctx.author.mention}さんにより{member.mention}さんに{amount}{crypto.unit}付与しました。"
-                           f"\n`vc.me`コマンドから確認してください。")
+            await EmbedMaker(ctx).by_success_text(
+                f"{ctx.author.mention}さんにより{member.mention}さんに{amount}{crypto.unit}付与しました。"
+                f"\n`vc.me`コマンドから確認してください。").send()
             return
 
-        await ctx.send("処理に失敗しました。再度実行してください。")
+        await EmbedMaker(ctx).by_error_text("処理に失敗しました。再度実行してください。").send()
 
     @commands.command(aliases=["pay"])
     async def tip(self, ctx: commands.Context, member: discord.Member, unit: str, amount: int):
@@ -46,33 +49,35 @@ class CryptoGiveController(commands.Cog):
         unitで指定した通貨を渡します。
         """
         if member.bot:
-            await ctx.send("Botを指定することはできません。")
+            await EmbedMaker(ctx).by_error_text("Botを指定することはできません。").send()
             return
 
         if amount <= 0:
-            await ctx.send("0以下の数を指定することはできません。")
+            await EmbedMaker(ctx).by_error_text("0以下の数を指定することはできません。").send()
             return
 
         crypto = await self.crypto_model.get_by_unit(unit)
         if crypto is None:
-            await ctx.send("その単位の通貨は存在しません。")
+            await EmbedMaker(ctx).by_error_text("その単位の通貨は存在しません。").send()
             return
 
         user = await self.user_model.get_one(ctx.author.id, crypto.id)
 
         if user is None:
-            await ctx.send("あなたはその通貨を所持していません。")
+            await EmbedMaker(ctx).by_error_text("あなたはその通貨を所持していません。").send()
             return
 
         if amount > user.amount:
-            await ctx.send(f"所持数が足りません。({amount}{crypto.unit} > {user.amount}{crypto.unit})")
+            await EmbedMaker(ctx).by_error_text(
+                f"所持数が足りません。({amount}{crypto.unit} > {user.amount}{crypto.unit})").send()
             return
 
         await self.user_model.add_amount(ctx.author.id, crypto.id, -amount)
         await self.user_model.add_amount(member.id, crypto.id, amount)
 
-        await ctx.send(f"{ctx.author.mention}さんから{member.mention}さんへ{amount}{crypto.unit}送られました。\n"
-                       f"`vc.me`コマンドから確認してください。")
+        await EmbedMaker(ctx).by_success_text(
+            f"{ctx.author.mention}さんから{member.mention}さんへ{amount}{crypto.unit}送られました。\n"
+            f"`vc.me`コマンドから確認してください。").send()
 
 
 def setup(bot):

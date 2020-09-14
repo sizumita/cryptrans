@@ -1,7 +1,9 @@
 from models import CryptoModel
 from discord.ext import commands
+from lib import EmbedMaker
 import re
 import asyncio
+import discord
 unit_compiled = re.compile(r"^[A-Za-z\-_]+$")
 
 
@@ -22,27 +24,30 @@ class CryptoCreateController(commands.Cog):
             per_amount: 通貨が10分ごと何枚増えるかを入力します。例えば100枚であれば１日に144,000枚増える計算になります。例: 100
         """
         if await self.model.guild_exists(ctx.guild.id):
-            await ctx.send("このサーバーではすでに通貨が作成されています。")
+            await EmbedMaker(ctx).by_error_text("このサーバーではすでに通貨が作成されています。").send()
             return
 
         if await self.model.name_exists(name):
-            await ctx.send("その名前の通貨はすでに存在します。")
+            await EmbedMaker(ctx).by_error_text("その名前の通貨はすでに存在します。").send()
             return
 
         if await self.model.unit_exists(unit):
-            await ctx.send("その単位の通貨はすでに存在します。")
+            await EmbedMaker(ctx).by_error_text("その単位の通貨はすでに存在します。").send()
             return
 
         if unit_compiled.match(unit) is None:
-            await ctx.send("その単位の表記は使用できません。他の表記に変更してください。")
+            await EmbedMaker(ctx).by_error_text("その単位の表記は使用できません。他の表記に変更してください。").send()
             return
 
         if not (0 <= per_amount <= 1000):
-            await ctx.send("増え方は0 から1000の間にしてください。")
+            await EmbedMaker(ctx).by_error_text("増え方は0 から1000の間にしてください。").send()
             return
 
-        await ctx.send(f"通貨名: {name}, 単位: {unit}, 10分ごとの増加量: {per_amount}{unit} "
-                       f"で通貨を作成しますか?\n作成する場合は`accept`, キャンセルする場合は他の文字を打ってください。")
+        embed = discord.Embed(
+            title="確認",
+            description=f"通貨名: {name}, 単位: {unit}, 10分ごとの増加量: {per_amount}{unit} "
+                        f"で通貨を作成しますか?\n作成する場合は`accept`, キャンセルする場合は他の文字を打ってください。")
+        await EmbedMaker(ctx).default(embed).send()
 
         def check(m):
             return m.channel.id == ctx.channel.id and m.author.id == ctx.author.id
@@ -53,10 +58,10 @@ class CryptoCreateController(commands.Cog):
             return
 
         if msg.content != "accept":
-            await ctx.send("通貨の作成をキャンセルしました。")
+            await EmbedMaker(ctx).by_error_text("通貨の作成をキャンセルしました。").send()
             return
 
-        await ctx.send("通貨を作成します...")
+        await EmbedMaker(ctx).success(discord.Embed(title="作成開始", description="通貨を作成します...")).send()
         r = await self.model.create(
             guild_id=ctx.guild.id,
             name=name,
@@ -64,19 +69,20 @@ class CryptoCreateController(commands.Cog):
             per_amount=per_amount
         )
         if r:
-            await ctx.send(f"通貨の作成が完了しました。\n`vc.info {unit}`コマンドか、このサーバー内で`vc.info`コマンドを使用して確認してください。")
+            await EmbedMaker(ctx)\
+                .by_success_text(f"通貨の作成が完了しました。\n`vc.info {unit}`コマンドか、このサーバー内で`vc.info`コマンドを使用して確認してください。").send()
             return
-        await ctx.send("不明なエラーが発生しました。")
+        await EmbedMaker(ctx).by_error_text("不明なエラーが発生しました。").send()
 
     @create.error
     async def create_error(self, ctx: commands.Context, exception):
         if isinstance(exception, commands.BadArgument):
             return
         if ctx.guild is None:
-            await ctx.send("このコマンドはギルド専用です。")
+            await EmbedMaker(ctx).by_error_text("このコマンドはギルド専用です。").send()
             return
         if not ctx.author.guild_permissions.administrator:
-            await ctx.send("このコマンドを実行する権限がありません。(必要な権限: 管理者)")
+            await EmbedMaker(ctx).by_error_text("このコマンドを実行する権限がありません。(必要な権限: 管理者)").send()
 
 
 def setup(bot):

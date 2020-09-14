@@ -1,6 +1,7 @@
 from discord.ext import commands
 from models import UserModel, CryptoModel
 import discord
+from lib import EmbedMaker
 
 
 class UserInfoController(commands.Cog):
@@ -13,7 +14,7 @@ class UserInfoController(commands.Cog):
     async def me(self, ctx: commands.Context):
         users = await self.user_model.get(ctx.author.id)
         if not users:
-            await ctx.send("あなたは一つも通貨を持っていません。")
+            await EmbedMaker(ctx).by_error_text("あなたは一つも通貨を持っていません。").send()
             return
 
         text = ""
