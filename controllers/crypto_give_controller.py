@@ -52,6 +52,10 @@ class CryptoGiveController(commands.Cog):
             await EmbedMaker(ctx).by_error_text("Botを指定することはできません。").send()
             return
 
+        if member.id == ctx.author.id:
+            await EmbedMaker(ctx).by_error_text("自分自身を指定することはできません。").send()
+            return
+
         if amount <= 0:
             await EmbedMaker(ctx).by_error_text("0以下の数を指定することはできません。").send()
             return
