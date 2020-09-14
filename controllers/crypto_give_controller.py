@@ -43,7 +43,7 @@ class CryptoGiveController(commands.Cog):
 
         await EmbedMaker(ctx).by_error_text("処理に失敗しました。再度実行してください。").send()
 
-    @commands.command(aliases=["pay"])
+    @commands.command(aliases=["pay", "send"])
     async def tip(self, ctx: commands.Context, member: discord.Member, unit: str, amount: int):
         """
         unitで指定した通貨を渡します。
