@@ -37,6 +37,10 @@ class CryptoCreateController(commands.Cog):
             await ctx.send("その単位の表記は使用できません。他の表記に変更してください。")
             return
 
+        if not (0 <= per_amount <= 1000):
+            await ctx.send("増え方は0 から1000の間にしてください。")
+            return
+
         await ctx.send(f"通貨名: {name}, 単位: {unit}, 10分ごとの増加量: {per_amount}{unit} "
                        f"で通貨を作成しますか?\n作成する場合は`accept`, キャンセルする場合は他の文字を打ってください。")
 
