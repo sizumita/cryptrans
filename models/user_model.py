@@ -46,3 +46,10 @@ class UserModel(UserBase):
         except asyncpg.UniqueViolationError:
             return False
         return True
+
+    async def add_amount(self, user_id: int, guild_id: int, amount: int) -> bool:
+        if not await self.exists(user_id, guild_id):
+            return await self.create(user_id, guild_id, amount)
+        user = await self.get_one(user_id, guild_id)
+        await user.update(amount=User.amount + amount).apply()
+        return True

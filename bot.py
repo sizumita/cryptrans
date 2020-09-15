@@ -31,6 +31,7 @@ class Cryptrans(commands.Bot):
             await asyncio.sleep(60 * 10)
 
             await asyncio.gather(
-                *[crypto.update(hold=Crypto.hold + crypto.per_amount).apply() for crypto in await CryptoModel().all()],
+                *[crypto.update(hold=Crypto.hold + crypto.per_amount).apply() for crypto in await CryptoModel().all()
+                  if crypto.distribution],
                 loop=self.loop
             )

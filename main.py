@@ -7,6 +7,8 @@ bot = Cryptrans()
 controllers = [
     "crypto_create_controller",
     "crypto_info_controller",
+    "crypto_give_controller",
+    "user_info_controller",
 ]
 
 for controller in controllers:

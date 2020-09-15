@@ -1,6 +1,7 @@
 from discord.ext import commands
 from models import CryptoModel, UserModel
 import discord
+from lib import EmbedMaker
 
 
 class CryptoInfoController(commands.Cog):
@@ -13,14 +14,14 @@ class CryptoInfoController(commands.Cog):
             crypto = await CryptoModel().get(ctx.guild.id)
 
             if crypto is None:
-                await ctx.send("このサーバーでは通貨は作成されていません。")
+                await EmbedMaker(ctx).by_error_text("このサーバーでは通貨は作成されていません。").send()
                 return
 
         else:
             crypto = await CryptoModel().get_by_unit(unit)
 
             if crypto is None:
-                await ctx.send("その単位の通貨は作成されていません。")
+                await EmbedMaker(ctx).by_error_text("その単位の通貨は作成されていません。").send()
                 return
 
         all_users = await UserModel().get_crypto_all(crypto.id)

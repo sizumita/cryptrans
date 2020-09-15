@@ -22,6 +22,7 @@ class Crypto(db.Model):
     hold = db.Column(db.BigInteger, default=0)
     per_amount = db.Column(db.BigInteger, default=100)
     created_at = db.Column(db.DateTime(), server_default='now()')
+    distribution = db.Column(db.Boolean, default=True)
 
 
 class CryptoModel(CryptoBase):
