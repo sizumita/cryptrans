@@ -1,8 +1,8 @@
-from bot import Cryptrans
+from bot import VirtualCrypto
 from os import environ
 
 
-bot = Cryptrans()
+bot = VirtualCrypto()
 
 controllers = [
     "crypto_create_controller",

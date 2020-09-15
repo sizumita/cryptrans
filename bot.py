@@ -4,9 +4,18 @@ from lib import db
 from models import CryptoModel, Crypto
 from sqlalchemy.engine.url import URL
 import asyncio
+from lib import EmbedMaker
 
 
-class Cryptrans(commands.Bot):
+wiki_commands = {
+    "info": "https://github.com/sizumita/virtualCrypto/wiki/Commands#vcinfo-通貨名",
+    "pay": "https://github.com/sizumita/virtualCrypto/wiki/Commands#vcpaytipsend-メンション-通貨の単位-数量",
+    "create": "https://github.com/sizumita/virtualCrypto/wiki/Commands#vccreate-通貨名-通貨の単位-10分に増える通貨の量",
+    "give": "https://github.com/sizumita/virtualCrypto/wiki/Commands#vcgive-メンション-数量",
+}
+
+
+class VirtualCrypto(commands.Bot):
     def __init__(self) -> None:
         super().__init__(command_prefix=commands.when_mentioned_or("vc."), help_command=None)
         self.loop.create_task(self.init_db())
@@ -35,3 +44,13 @@ class Cryptrans(commands.Bot):
                   if crypto.distribution],
                 loop=self.loop
             )
+
+    async def on_command_error(self, context: commands.Context, exception):
+        if isinstance(exception, commands.BadArgument) or isinstance(exception, commands.MissingRequiredArgument):
+            if context.command.name in wiki_commands.keys():
+                await EmbedMaker(context).by_error_text("コマンドの引数が間違っています。こちらからご確認ください: " + wiki_commands[context.command.name]).send()
+                return
+        if isinstance(exception, commands.CommandNotFound):
+            return
+
+        await super(VirtualCrypto, self).on_command_error(context, exception)
