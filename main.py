@@ -9,6 +9,7 @@ controllers = [
     "crypto_info_controller",
     "crypto_give_controller",
     "user_info_controller",
+    "help_command_controller",
 ]
 
 for controller in controllers:

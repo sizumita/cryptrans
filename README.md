@@ -1,9 +1,11 @@
-# Cryptrans
+# virtualCrypto
 
-Cryptransは、Discord上でサーバーごとの仮想通貨と、
+virtualCryptoは、Discord上でサーバーごとの仮想通貨と、
 それを取引する取引場を提供するBotです。
 
-招待URL: https://discord.com/api/oauth2/authorize?client_id=754196279315398666&permissions=904256&scope=bot
+招待URL: https://discord.com/api/oauth2/authorize?client_id=754196279315398666&permissions=912448&scope=bot
+
+wiki: https://github.com/sizumita/virtualCrypto/wiki
 
 ## 主な機能
 

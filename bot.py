@@ -8,7 +8,7 @@ import asyncio
 
 class Cryptrans(commands.Bot):
     def __init__(self) -> None:
-        super().__init__(command_prefix=commands.when_mentioned_or("vc."))
+        super().__init__(command_prefix=commands.when_mentioned_or("vc."), help_command=None)
         self.loop.create_task(self.init_db())
         self.loop.create_task(self.give_hold_batch())
 
