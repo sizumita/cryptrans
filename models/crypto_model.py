@@ -20,23 +20,33 @@ class Crypto(db.Model):
     unit = db.Column(db.String)
     name = db.Column(db.String)
     hold = db.Column(db.BigInteger, default=0)
-    per_amount = db.Column(db.BigInteger, default=100)
     created_at = db.Column(db.DateTime(), server_default='now()')
+    max_amount = db.Column(db.BigInteger)
+    member_count = db.Column(db.BigInteger)
     distribution = db.Column(db.Boolean, default=True)
 
 
 class CryptoModel(CryptoBase):
-    async def create(self, guild_id: int, name: str, unit: str, per_amount: int) -> bool:
+    async def create(self, guild_id: int, name: str, unit: str, member_count: int) -> bool:
         if await self.name_exists(name=name):
             return False
         if await self.guild_exists(guild_id=guild_id):
             return False
+        if member_count <= 100:
+            max_amount = 4380000
+        elif member_count <= 1000:
+            max_amount = 43800000
+        elif member_count <= 10000:
+            max_amount = 438000000
+        else:
+            max_amount = 4380000000
         try:
             await Crypto.create(
                 id=guild_id,
                 name=name,
                 unit=unit,
-                per_amount=per_amount,
+                max_amount=max_amount,
+                member_count=member_count,
             )
         except asyncpg.UniqueViolationError:
             return False
