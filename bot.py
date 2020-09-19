@@ -38,14 +38,14 @@ class VirtualCrypto(commands.Bot):
     async def give_hold_batch(self):
         await self.wait_until_ready()
         while not self.is_closed():
-            await asyncio.sleep(60 * 60 * 10)
             crypts = await CryptoModel().all()
             for crypto in crypts:
                 if not crypto.distribution:
                     continue
                 all_amount = sum([i.amount for i in await UserModel().get_crypto_all(crypto.id)])
                 online_count = len(
-                    [member for member in self.get_guild(crypto.id) if member.status is discord.Status.online
+                    [member for member in self.get_guild(crypto.id).members if member.status is not discord.Status.offline
+                     and member.status is not discord.Status.idle
                      and not member.bot]
                 )
                 if all_amount + (online_count * 10) > crypto.max_amount:
@@ -59,6 +59,7 @@ class VirtualCrypto(commands.Bot):
                 self.loop.create_task(
                     crypto.update(hold=Crypto.hold + (online_count * 10)).apply()
                 )
+            await asyncio.sleep(60 * 60 * 10)
 
     async def on_command_error(self, context: commands.Context, exception):
         if isinstance(exception, commands.BadArgument) or isinstance(exception, commands.MissingRequiredArgument):

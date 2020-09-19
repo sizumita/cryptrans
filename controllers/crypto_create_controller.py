@@ -61,7 +61,7 @@ class CryptoCreateController(commands.Cog):
             guild_id=ctx.guild.id,
             name=name,
             unit=unit,
-            member_count=len(ctx.guild.member_count)
+            member_count=ctx.guild.member_count
         )
         if r:
             await EmbedMaker(ctx)\
@@ -78,6 +78,7 @@ class CryptoCreateController(commands.Cog):
             return
         if not ctx.author.guild_permissions.administrator:
             await EmbedMaker(ctx).by_error_text("このコマンドを実行する権限がありません。(必要な権限: 管理者)").send()
+        raise exception
 
 
 def setup(bot):

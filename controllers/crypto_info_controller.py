@@ -52,8 +52,8 @@ class CryptoInfoController(commands.Cog):
             inline=False
         )
         embed.add_field(
-            name="10分ごとの増加量",
-            value=f"{crypto.per_amount}{crypto.unit}",
+            name="最大枚数",
+            value=f"{crypto.max_amount}{crypto.unit}",
             inline=False
         )
         embed.add_field(
