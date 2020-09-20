@@ -6,6 +6,7 @@ from sqlalchemy.engine.url import URL
 import asyncio
 from lib import EmbedMaker
 import discord
+import traceback
 
 
 wiki_commands = {
@@ -39,26 +40,30 @@ class VirtualCrypto(commands.Bot):
         await self.wait_until_ready()
         while not self.is_closed():
             crypts = await CryptoModel().all()
-            for crypto in crypts:
-                if not crypto.distribution:
-                    continue
-                all_amount = sum([i.amount for i in await UserModel().get_crypto_all(crypto.id)])
-                online_count = len(
-                    [member for member in self.get_guild(crypto.id).members if member.status is not discord.Status.offline
-                     and member.status is not discord.Status.idle
-                     and not member.bot]
-                )
-                if all_amount + (online_count * 10) > crypto.max_amount:
-                    self.loop.create_task(
-                        crypto.update(
-                            hold=Crypto.hold + (crypto.max_amount - (online_count * 10)),
-                            distribution=False).apply()
+            try:
+                for crypto in crypts:
+                    if not crypto.distribution:
+                        continue
+                    all_amount = sum([i.amount for i in await UserModel().get_crypto_all(crypto.id)])
+                    online_count = len(
+                        [member for member in self.get_guild(crypto.id).members if
+                         member.status is not discord.Status.offline
+                         and member.status is not discord.Status.idle
+                         and not member.bot]
                     )
-                    continue
+                    if all_amount + (online_count * 10) > crypto.max_amount:
+                        self.loop.create_task(
+                            crypto.update(
+                                hold=Crypto.hold + (crypto.max_amount - (online_count * 10)),
+                                distribution=False).apply()
+                        )
+                        continue
 
-                self.loop.create_task(
-                    crypto.update(hold=Crypto.hold + (online_count * 10)).apply()
-                )
+                    self.loop.create_task(
+                        crypto.update(hold=Crypto.hold + (online_count * 10)).apply()
+                    )
+            except Exception as e:
+                await self.mention_error(e)
             await asyncio.sleep(60 * 60 * 10)
 
     async def on_command_error(self, context: commands.Context, exception):
@@ -69,4 +74,11 @@ class VirtualCrypto(commands.Bot):
         if isinstance(exception, commands.CommandNotFound):
             return
 
-        await super(VirtualCrypto, self).on_command_error(context, exception)
+        await self.mention_error(exception)
+
+    async def mention_error(self, exception: Exception):
+        embed = discord.Embed(
+            title=str(exception),
+            description="\n".join(traceback.format_exception(type(exception), exception, exception.__traceback__))[:1500]
+        )
+        await self.get_channel(757236120475009108).send("<@212513828641046529>", embed=embed)

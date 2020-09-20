@@ -65,7 +65,7 @@ class CryptoModel(CryptoBase):
         return True if await Crypto.query.where(Crypto.name == name).gino.first() else False
 
     async def unit_exists(self, unit: str) -> bool:
-        return True if await Crypto.query.where(Crypto.unit == unit).gino.first() else False
+        return True if await Crypto.query.where(Crypto.unit == unit.lower()).gino.first() else False
 
     async def guild_exists(self, guild_id: int) -> bool:
         return True if await Crypto.query.where(Crypto.id == guild_id).gino.first() else False

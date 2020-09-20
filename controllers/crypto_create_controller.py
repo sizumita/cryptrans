@@ -4,7 +4,7 @@ from lib import EmbedMaker
 import re
 import asyncio
 import discord
-unit_compiled = re.compile(r"^[A-Za-z\-_]+$")
+unit_compiled = re.compile(r"^[a-z\-_]+$")
 
 
 class CryptoCreateController(commands.Cog):
@@ -35,12 +35,12 @@ class CryptoCreateController(commands.Cog):
             return
 
         if unit_compiled.match(unit) is None:
-            await EmbedMaker(ctx).by_error_text("その単位の表記は使用できません。他の表記に変更してください。").send()
+            await EmbedMaker(ctx).by_error_text("その単位の表記は使用できません。他の表記に変更してください。英大文字は使用できません。").send()
             return
 
         embed = discord.Embed(
             title="確認",
-            description=f"通貨名: {name}, 単位: {unit} "
+            description=f"通貨名: {name}, 単位: `{unit}` "
                         f"で通貨を作成しますか?\n作成する場合は`accept`, キャンセルする場合は他の文字を打ってください。")
         await EmbedMaker(ctx).default(embed).send()
 
