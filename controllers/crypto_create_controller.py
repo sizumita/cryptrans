@@ -15,13 +15,12 @@ class CryptoCreateController(commands.Cog):
     @commands.command(aliases=['register'])
     @commands.has_guild_permissions(administrator=True)
     @commands.guild_only()
-    async def create(self, ctx: commands.Context, name: str, unit: str, per_amount: int) -> None:
+    async def create(self, ctx: commands.Context, name: str, unit: str) -> None:
         """
         新しい通貨を発行します。一つのサーバーにつき一通貨までしか発行できません。
         引数の詳細:
             name: 通貨の名前です。例: DiscordMoney
             unit: 通貨の単位です。英字、アンダースコア、横棒が使えます。例: dm
-            per_amount: 通貨が10分ごと何枚増えるかを入力します。例えば100枚であれば１日に144,000枚増える計算になります。例: 100
         """
         if await self.model.guild_exists(ctx.guild.id):
             await EmbedMaker(ctx).by_error_text("このサーバーではすでに通貨が作成されています。").send()
@@ -39,13 +38,9 @@ class CryptoCreateController(commands.Cog):
             await EmbedMaker(ctx).by_error_text("その単位の表記は使用できません。他の表記に変更してください。").send()
             return
 
-        if not (0 <= per_amount <= 1000):
-            await EmbedMaker(ctx).by_error_text("増え方は0 から1000の間にしてください。").send()
-            return
-
         embed = discord.Embed(
             title="確認",
-            description=f"通貨名: {name}, 単位: {unit}, 10分ごとの増加量: {per_amount}{unit} "
+            description=f"通貨名: {name}, 単位: {unit} "
                         f"で通貨を作成しますか?\n作成する場合は`accept`, キャンセルする場合は他の文字を打ってください。")
         await EmbedMaker(ctx).default(embed).send()
 
@@ -66,7 +61,7 @@ class CryptoCreateController(commands.Cog):
             guild_id=ctx.guild.id,
             name=name,
             unit=unit,
-            per_amount=per_amount
+            member_count=ctx.guild.member_count
         )
         if r:
             await EmbedMaker(ctx)\
@@ -83,6 +78,7 @@ class CryptoCreateController(commands.Cog):
             return
         if not ctx.author.guild_permissions.administrator:
             await EmbedMaker(ctx).by_error_text("このコマンドを実行する権限がありません。(必要な権限: 管理者)").send()
+        raise exception
 
 
 def setup(bot):

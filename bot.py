@@ -1,10 +1,11 @@
 from discord.ext import commands
 from os import environ
 from lib import db
-from models import CryptoModel, Crypto
+from models import CryptoModel, Crypto, UserModel
 from sqlalchemy.engine.url import URL
 import asyncio
 from lib import EmbedMaker
+import discord
 
 
 wiki_commands = {
@@ -37,13 +38,28 @@ class VirtualCrypto(commands.Bot):
     async def give_hold_batch(self):
         await self.wait_until_ready()
         while not self.is_closed():
-            await asyncio.sleep(60 * 10)
+            crypts = await CryptoModel().all()
+            for crypto in crypts:
+                if not crypto.distribution:
+                    continue
+                all_amount = sum([i.amount for i in await UserModel().get_crypto_all(crypto.id)])
+                online_count = len(
+                    [member for member in self.get_guild(crypto.id).members if member.status is not discord.Status.offline
+                     and member.status is not discord.Status.idle
+                     and not member.bot]
+                )
+                if all_amount + (online_count * 10) > crypto.max_amount:
+                    self.loop.create_task(
+                        crypto.update(
+                            hold=Crypto.hold + (crypto.max_amount - (online_count * 10)),
+                            distribution=False).apply()
+                    )
+                    continue
 
-            await asyncio.gather(
-                *[crypto.update(hold=Crypto.hold + crypto.per_amount).apply() for crypto in await CryptoModel().all()
-                  if crypto.distribution],
-                loop=self.loop
-            )
+                self.loop.create_task(
+                    crypto.update(hold=Crypto.hold + (online_count * 10)).apply()
+                )
+            await asyncio.sleep(60 * 60 * 10)
 
     async def on_command_error(self, context: commands.Context, exception):
         if isinstance(exception, commands.BadArgument) or isinstance(exception, commands.MissingRequiredArgument):
