@@ -11,14 +11,14 @@ class HelpCommandController(commands.Cog):
         )
         self.help_embed.add_field(
             name="コマンド一覧",
-            value="[公式Wikiコマンド一覧ページ](https://github.com/sizumita/virtualCrypto/wiki/Commands)",
+            value="[公式Wikiコマンド一覧ページ](https://github.com/virtualCrypto-discord/virtualCrypto/wiki/Commands)",
             inline=False
         )
         self.help_embed.add_field(
             name="各種URL",
             value="[公式サーバー](https://discord.gg/Hgp5DpG)\n"
                   "[Botの招待](https://discord.com/api/oauth2/authorize?client_id=754196279315398666&permissions=912448&scope=bot)\n"
-                  "[公式Wiki](https://github.com/sizumita/virtualCrypto/wiki)",
+                  "[公式Wiki](https://github.com/virtualCrypto-discord/virtualCrypto/wiki)",
             inline=False
         )
 

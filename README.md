@@ -5,7 +5,7 @@ virtualCryptoは、Discord上でサーバーごとの仮想通貨と、
 
 招待URL: https://discord.com/api/oauth2/authorize?client_id=754196279315398666&permissions=912448&scope=bot
 
-wiki: https://github.com/sizumita/virtualCrypto/wiki
+wiki: https://github.com/virtualCrypto-discord/virtualCrypto/wiki
 
 ## 主な機能
 

@@ -10,10 +10,10 @@ import traceback
 
 
 wiki_commands = {
-    "info": "https://github.com/sizumita/virtualCrypto/wiki/Commands#vcinfo-通貨名",
-    "pay": "https://github.com/sizumita/virtualCrypto/wiki/Commands#vcpaytipsend-メンション-通貨の単位-数量",
-    "create": "https://github.com/sizumita/virtualCrypto/wiki/Commands#vccreate-通貨名-通貨の単位-10分に増える通貨の量",
-    "give": "https://github.com/sizumita/virtualCrypto/wiki/Commands#vcgive-メンション-数量",
+    "info": "https://github.com/virtualCrypto-discord/virtualCrypto/wiki/Commands#vcinfo-通貨名",
+    "pay": "https://github.com/virtualCrypto-discord/virtualCrypto/wiki/Commands#vcpaytipsend-メンション-通貨の単位-数量",
+    "create": "https://github.com/virtualCrypto-discord/virtualCrypto/wiki/Commands#vccreate-通貨名-通貨の単位-10分に増える通貨の量",
+    "give": "https://github.com/virtualCrypto-discord/virtualCrypto/wiki/Commands#vcgive-メンション-数量",
 }
 
 
