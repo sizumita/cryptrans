@@ -74,7 +74,7 @@ class CryptoCreateController(commands.Cog):
         if isinstance(exception, commands.BadArgument):
             return
         if ctx.guild is None:
-            await EmbedMaker(ctx).by_error_text("このコマンドはギルド専用です。").send()
+            await EmbedMaker(ctx).by_error_text("このコマンドはサーバー専用です。").send()
             return
         if not ctx.author.guild_permissions.administrator:
             await EmbedMaker(ctx).by_error_text("このコマンドを実行する権限がありません。(必要な権限: 管理者)").send()
