@@ -64,7 +64,7 @@ class VirtualCrypto(commands.Bot):
                     )
             except Exception as e:
                 await self.mention_error(e)
-            await asyncio.sleep(60 * 60 * 10)
+            await asyncio.sleep(60 * 10) #10 minutes
 
     async def on_command_error(self, context: commands.Context, exception):
         if isinstance(exception, commands.BadArgument) or isinstance(exception, commands.MissingRequiredArgument):
