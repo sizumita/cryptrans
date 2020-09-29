@@ -6,7 +6,7 @@ import asyncpg
 
 class Crypto(db.Model):
     """
-    格ギルドのお金の定義
+    各ギルドのお金の定義
     fields:
         id: guild id
         name: crypto name
