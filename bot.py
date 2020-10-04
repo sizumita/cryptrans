@@ -45,8 +45,11 @@ class VirtualCrypto(commands.Bot):
                     if not crypto.distribution:
                         continue
                     all_amount = sum([i.amount for i in await UserModel().get_crypto_all(crypto.id)])
+                    guild = self.get_guild(crypto.id)
+                    if guild is None:
+                        continue
                     online_count = len(
-                        [member for member in (self.get_guild(crypto.id).members if self.get_guild(crypto.id) is not None else 0) if
+                        [member for member in guild.members if
                          member.status is not discord.Status.offline
                          and member.status is not discord.Status.idle
                          and not member.bot]
